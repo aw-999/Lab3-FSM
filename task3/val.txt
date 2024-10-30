@@ -1,0 +1,1 @@
+value of N which matches 60bpm metronome was N = 22
