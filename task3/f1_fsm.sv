@@ -14,7 +14,7 @@ module f1_fsm (
 
     always_comb 
         case(current_state)
-            S_0: if(en) next_state = S_1;
+            S_0: if(trigger) next_state = S_1;
                 else next_state = S_0;
             S_1: if(en) next_state = S_2;
                 else next_state = S_1;

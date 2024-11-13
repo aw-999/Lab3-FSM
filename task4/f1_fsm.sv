@@ -12,13 +12,9 @@ module f1_fsm (
     typedef enum [7:0] {S_0, S_1, S_2, S_3, S_4, S_5, S_6, S_7, S_8} my_state;
     my_state current_state, next_state;
 
-    always_ff @(posedge clk, posedge rst)
-        if (rst) current_state <= S_0;
-        else current_state <= next_state;
-
     always_comb 
-        case(current_state)
-            S_0: if(en) next_state = S_1;
+        case(current_state) 
+            S_0: if(trigger) next_state = S_1;
                 else next_state = S_0;
             S_1: if(en) next_state = S_2;
                 else next_state = S_1;
@@ -50,14 +46,19 @@ module f1_fsm (
             S_6: data_out = 8'b00111111;
             S_7: data_out = 8'b01111111;
             S_8: data_out = 8'b11111111;
+            default: data_out = 8'b0;
         endcase
 
     assign data_out = current_state;
-    begin always_comb
-        if (data_out != 8'b00000000)
-            cmd_seq = 1'b1;
-        if (data_out == 8'b11111111)
-            cmd_delay = 1'b1;
+    always_ff @(posedge clk) begin
+        if(rst) current_state <= S_0;
+        else current_state <= next_state;
+        if (current_state != S_0)
+            cmd_seq <= 1'b1;
+        else  cmd_seq <= 1'b0;
+        if (current_state == S_8)
+             cmd_delay <= 1'b1;
+        else  cmd_delay <= 1'b0;
     end
 
 
